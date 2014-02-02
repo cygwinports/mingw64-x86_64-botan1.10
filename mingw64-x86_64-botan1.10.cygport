@@ -1,0 +1,37 @@
+CROSS_HOST="x86_64-w64-mingw32"
+inherit cross
+
+NAME="mingw64-x86_64-botan1.10"
+VERSION=1.10.5
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="C++ crypto library for Win64 toolchain"
+DESCRIPTION="Botan is a crypto library for C++ released under the permissive
+2-clause BSD license. It provides most any cryptographic algorithm you might be
+looking for, along with Transport Layer Security (TLS), X.509 certs, CRLs, and
+path validation, a pipeline-style message processing system, bcrypt password
+hashing, and other useful things."
+HOMEPAGE="http://botan.randombit.net/"
+#SRC_URI="http://files.randombit.net/botan/Botan-${VERSION}.tbz"
+md5sum=ac941b269bd6c73ab40b63577482b163
+SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/botan/Botan-${VERSION}.stripped.tbz/${md5sum}/Botan-${VERSION}.stripped.tbz"
+SRC_DIR="Botan-${VERSION}"
+PATCH_URI="1.10.5-cross-compile.patch"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	./configure.py \
+		--cc=gcc --os=mingw --cpu=x86_64 \
+		--prefix=${CROSS_PREFIX} --enable-shared \
+		--with-openssl --with-gnump --with-bzip2 --with-zlib \
+		--without-doxygen --without-sphinx \
+		|| error "configure failed"
+	cygmake CROSS=${CROSS_HOST}-
+}
+
+src_install() {
+	cd ${B}
+	cygmake install -j1 DESTDIR=${D}${CROSS_PREFIX} DOCDIR=${D}/usr/share/doc/${NAME}
+	rm -fr ${D}/usr/share/doc/${NAME}/manual/
+}

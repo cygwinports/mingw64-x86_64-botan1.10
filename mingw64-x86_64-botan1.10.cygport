@@ -2,7 +2,7 @@ CROSS_HOST="x86_64-w64-mingw32"
 inherit cross
 
 NAME="mingw64-x86_64-botan1.10"
-VERSION=1.10.12
+VERSION=1.10.13
 RELEASE=1
 CATEGORY="Devel"
 SUMMARY="C++ crypto library for Win64 toolchain"
